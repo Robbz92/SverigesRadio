@@ -6,6 +6,8 @@ import com.example.demo.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
     /*
@@ -20,6 +22,9 @@ public class UserService {
 
     public User register(User user){return myUserDetailsService.registerUser(user);}
 
+    public List<User> getAll(){
+        return userRepo.findAll();
+    }
     /*
         här kan vi även lägga till en whoami metod för att visa aktiv användre
      */

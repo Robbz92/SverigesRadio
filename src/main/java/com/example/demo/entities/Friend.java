@@ -13,7 +13,6 @@ public class Friend {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "friend_id")
     private long friendId;
-
     private String email;
     private String firstName;
 
@@ -23,6 +22,7 @@ public class Friend {
 
     public Friend() {
     }
+
 
     public long getFriendId() {
         return friendId;
