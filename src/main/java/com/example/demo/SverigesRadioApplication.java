@@ -17,7 +17,7 @@ public class SverigesRadioApplication {
  		For example: the database
  		Spring - repositories
 
- 		View - the interface where the uswe (or programmer) can interact with
+ 		View - the interface where the user (or programmer) can interact with
  		For example: REST-apo
  		Spring - controllers
 
