@@ -16,24 +16,29 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    // Userstory 1
     @GetMapping("/rest/getAllChannels")
     public List<GenericObject> getAllChannels(){return userService.getAllOptions("channels", "channels");}
 
-    @GetMapping("/rest/getAllPrograms")
-    public List<GenericObject> getAllPrograms(){return userService.getAllOptions("programs", "programs");}
-
-    @GetMapping("/rest/getAllCategories")
-    public List<GenericObject> getAllCategorie(){return userService.getAllOptions("programcategories", "programcategories");}
-
+    // Userstory 2
     @GetMapping("/rest/getAllBroadcasts")
     public List<GenericObject> getAllBroadcasts(){return userService.getAllOptions("scheduledepisodes/rightnow", "channels");}
 
+    // Userstory 3 Fungerar
     @GetMapping("/rest/getProgramsByChannelId/{id}")
     public List<GenericObject> getProgramsByChannelId(@PathVariable int id){return userService.getAllOptionsById("programs/index?channelid=", "programs", id);}
 
+    // Userstory 4 Fungerar (kolla in på null?)
+    @GetMapping("/rest/getAllCategories")
+    public List<GenericObject> getAllCategorie(){return userService.getAllOptions("programcategories", "programcategories");}
+
+    // Userstory 5 Fungerar
     @GetMapping("/rest/getProgramsByCategoryId/{id}")
     public List<GenericObject> getProgramsByCategoryId(@PathVariable int id){return userService.getAllOptionsById("programs/index?programcategoryid=", "programs", id);}
 
+
+
+    // ----->
     @PostMapping("/rest/register")
     public User register(@RequestBody User user){
         return userService.register(user);

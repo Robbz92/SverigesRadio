@@ -27,7 +27,7 @@ public class UserService {
     private String sverigesRadioApi = "http://api.sr.se/api/v2/";
     private String jsonFormatPagiFalse = "/?format=json&pagination=false";
     private String jsonFormat = "/?format=json";
-    private String jsonFormat2 = "&format=json";
+    private String jsonFormat2 = "&format=json&pagination=false";
 
     // Används för att hämta ALLT
     public List<GenericObject> getAllOptions(String pathOption, String responseOption){
@@ -41,8 +41,6 @@ public class UserService {
         switch (pathOption) {
             case "channels":
                 return getAllChannels(contentMap);
-            case "programs":
-                return getAllPrograms(contentMap);
             case "programcategories":
                 return getAllCategories(contentMap);
             case "scheduledepisodes/rightnow":
@@ -66,33 +64,11 @@ public class UserService {
             case "programs/index?channelid=":
                 return getProgramsByChannelId(contentMap);
             case "programs/index?programcategoryid=":
-                return getProgramsByChannelId(contentMap);
+                return getProgramsByCategoryId(contentMap);
 
         }
 
         return null;
-    }
-
-    private List<GenericObject> getAllPrograms(List<Map> contentMap) {
-        List<GenericObject> programs = new ArrayList<>();
-
-        for(Map program : contentMap){
-
-            GenericObject generic = new GenericObject(
-                    program.get("id"),
-                    program.get("name"),
-                    program.get("programimage"),
-                    program.get("programurl"),
-                    program.get("description"),
-                    program.get("responsibleeditor")
-            );
-
-
-            programs.add(generic);
-        }
-
-        return programs;
-
     }
 
     private List<GenericObject> getAllChannels(List<Map> contentMap){
