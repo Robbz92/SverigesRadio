@@ -35,17 +35,37 @@ public class UserService {
 
         List<Map> contentMap = (List<Map>) response.get(option);
 
-        if(option.equals("channels")){
-            return getAllChannels(contentMap);
+
+        switch (option) {
+            case "channels":
+                return getAllChannels(contentMap);
+            case "programs":
+                return getAllPrograms(contentMap);
         }
 
         return null;
     }
 
-    public User register(User user){return myUserDetailsService.registerUser(user);}
+    private List<GenericObject> getAllPrograms(List<Map> contentMap) {
+        List<GenericObject> programs = new ArrayList<>();
 
-    public List<User> getAll(){
-        return userRepo.findAll();
+        for(Map program : contentMap){
+
+            GenericObject generic = new GenericObject(
+                    program.get("id"),
+                    program.get("name"),
+                    program.get("programimage"),
+                    program.get("programurl"),
+                    program.get("description"),
+                    program.get("responsibleeditor")
+            );
+
+
+            programs.add(generic);
+        }
+
+        return programs;
+
     }
 
     private List<GenericObject> getAllChannels(List<Map> contentMap){
@@ -67,6 +87,12 @@ public class UserService {
         }
 
         return channels;
+    }
+
+    public User register(User user){return myUserDetailsService.registerUser(user);}
+
+    public List<User> getAll(){
+        return userRepo.findAll();
     }
     /*
         här kan vi även lägga till en whoami metod för att visa aktiv användre
