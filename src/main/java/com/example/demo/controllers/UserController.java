@@ -20,7 +20,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/rest/getAllChannels")
-    public List<GenericObject> getAllChannels(){return userService.getAllChannels();}
+    public List<GenericObject> getAllOptions(){return userService.getAllOptions("channels");}
 
     @PostMapping("/rest/register")
     public User register(@RequestBody User user){
