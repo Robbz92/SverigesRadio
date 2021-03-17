@@ -19,6 +19,10 @@ public class User {
     private String firstName;
     private String lastName;
 
+    @JsonIgnoreProperties("user")
+    @OneToMany(mappedBy = "user_id", fetch = FetchType.EAGER)
+    private List<Friend> friends;
+
     public User() {
     }
 
@@ -29,27 +33,12 @@ public class User {
         this.lastName = lastName;
     }
 
-    public long getId() {
-        return userid;
-    }
-    @JsonIgnoreProperties("user")
-    @OneToMany(mappedBy = "user_id", fetch = FetchType.EAGER)
-    private List<Friend> friend;
-
     public long getUserid() {
         return userid;
     }
 
     public void setUserid(long userid) {
         this.userid = userid;
-    }
-
-    public List<Friend> getFriend() {
-        return friend;
-    }
-
-    public void setFriend(List<Friend> friend) {
-        this.friend = friend;
     }
 
     public String getEmail() {
@@ -86,14 +75,22 @@ public class User {
         this.lastName = lastName;
     }
 
+    public List<Friend> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(List<Friend> friends) {
+        this.friends = friends;
+    }
+
     @Override
     public String toString() {
         return "User{" +
-                "id=" + userid +
-                ", email='" + email + '\'' +
+                "email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
+                ", friends=" + friends +
                 '}';
     }
 }

@@ -49,12 +49,12 @@ public class Friend {
     }
 
     @JsonIgnore
-    public User getUser_id() {
+    public User getUserId() {
         return user_id;
     }
 
     @JsonProperty
-    public void setUser_id(User user_id) {
+    public void setUserId(User user) {
         this.user_id = user_id;
     }
 
