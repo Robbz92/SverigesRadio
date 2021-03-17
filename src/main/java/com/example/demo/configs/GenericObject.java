@@ -4,22 +4,24 @@ public class GenericObject {
 
     private Object id;
     private Object name;
-    private Object image;
-    private Object tagline;
-    private Object siteUrl;
-    private Object scheduleUrl;
+    private Object param3;
+    private Object param4;
+    private Object param5;
+    private Object param6;
 
-    // Konstruktor för radiokanaler
-    public GenericObject(Object id, Object name, Object image, Object tagline, Object siteUrl, Object scheduleUrl) {
+    public GenericObject(Object id, Object name) {
         this.id = id;
         this.name = name;
-        this.image = image;
-        this.tagline = tagline;
-        this.siteUrl = siteUrl;
-        this.scheduleUrl = scheduleUrl;
     }
-
-
+    // Konstruktor för radiokanaler
+    public GenericObject(Object id, Object name, Object param3, Object param4, Object param5, Object param6) {
+        this.id = id;
+        this.name = name;
+        this.param3 = param3;
+        this.param4 = param4;
+        this.param5 = param5;
+        this.param6 = param6;
+    }
 
     public Object getId() {
         return id;
@@ -37,35 +39,36 @@ public class GenericObject {
         this.name = name;
     }
 
-    public Object getImage() {
-        return image;
+    public Object getParam3() {
+        return param3;
     }
 
-    public void setImage(Object image) {
-        this.image = image;
+    public void setParam3(Object param3) {
+        this.param3 = param3;
     }
 
-    public Object getTagline() {
-        return tagline;
+    public Object getParam4() {
+        return param4;
     }
 
-    public void setTagline(Object tagline) {
-        this.tagline = tagline;
+    public void setParam4(Object param4) {
+        this.param4 = param4;
     }
 
-    public Object getSiteUrl() {
-        return siteUrl;
+    public Object getParam5() {
+        return param5;
     }
 
-    public void setSiteUrl(Object siteUrl) {
-        this.siteUrl = siteUrl;
+    public void setParam5(Object param5) {
+        this.param5 = param5;
     }
 
-    public Object getScheduleUrl() {
-        return scheduleUrl;
+    public Object getParam6() {
+        return param6;
     }
 
-    public void setScheduleUrl(Object scheduleUrl) {
-        this.scheduleUrl = scheduleUrl;
+    public void setParam6(Object param6) {
+        this.param6 = param6;
     }
+
 }

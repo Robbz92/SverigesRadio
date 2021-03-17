@@ -25,22 +25,27 @@ public class UserService {
     private UserRepo userRepo;
 
     private String sverigesRadioApi = "http://api.sr.se/api/v2/";
+    private String jsonFormatPagiFalse = "/?format=json&pagination=false";
     private String jsonFormat = "/?format=json";
 
-
-    public List<GenericObject> getAllOptions(String option){
+    // Används för att hämta ALLT
+    public List<GenericObject> getAllOptions(String pathOption, String responseOption){
         RestTemplate template = new RestTemplate();
 
-        Map response = template.getForObject(sverigesRadioApi + option + jsonFormat, Map.class);
+        Map response = template.getForObject(sverigesRadioApi + pathOption + jsonFormatPagiFalse, Map.class);
 
-        List<Map> contentMap = (List<Map>) response.get(option);
+        List<Map> contentMap = (List<Map>) response.get(responseOption);
 
 
-        switch (option) {
+        switch (pathOption) {
             case "channels":
                 return getAllChannels(contentMap);
             case "programs":
                 return getAllPrograms(contentMap);
+            case "programcategories":
+                return getAllCategories(contentMap);
+            case "scheduledepisodes/rightnow":
+                return getAllBroadcasts(contentMap);
         }
 
         return null;
@@ -87,6 +92,44 @@ public class UserService {
         }
 
         return channels;
+    }
+
+    private List<GenericObject> getAllCategories(List<Map> contentMap){
+        List<GenericObject> channels = new ArrayList<>();
+
+        for(Map channel : contentMap){
+
+            GenericObject generic = new GenericObject(
+                    channel.get("id"),
+                    channel.get("name")
+            );
+
+
+            channels.add(generic);
+        }
+
+        return channels;
+    }
+
+    // kopplad med getAllOptions
+    private List<GenericObject> getAllBroadcasts(List<Map> contentMap) {
+        List<GenericObject> broadcasts = new ArrayList<>();
+
+        for(Map broadcast : contentMap){
+
+            GenericObject generic = new GenericObject(
+                    broadcast.get("id"),
+                    broadcast.get("name"),
+                    broadcast.get("programimage"),
+                    broadcast.get("programurl"),
+                    broadcast.get("description"),
+                    broadcast.get("responsibleeditor")
+            );
+
+            broadcasts.add(generic);
+        }
+
+        return broadcasts;
     }
 
     public User register(User user){return myUserDetailsService.registerUser(user);}
