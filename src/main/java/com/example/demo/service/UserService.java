@@ -27,6 +27,7 @@ public class UserService {
     private String sverigesRadioApi = "http://api.sr.se/api/v2/";
     private String jsonFormatPagiFalse = "/?format=json&pagination=false";
     private String jsonFormat = "/?format=json";
+    private String jsonFormat2 = "&format=json&pagination=false";
 
     // Används för att hämta ALLT
     public List<GenericObject> getAllOptions(String pathOption, String responseOption){
@@ -40,8 +41,6 @@ public class UserService {
         switch (pathOption) {
             case "channels":
                 return getAllChannels(contentMap);
-            case "programs":
-                return getAllPrograms(contentMap);
             case "programcategories":
                 return getAllCategories(contentMap);
             case "scheduledepisodes/rightnow":
@@ -51,26 +50,25 @@ public class UserService {
         return null;
     }
 
-    private List<GenericObject> getAllPrograms(List<Map> contentMap) {
-        List<GenericObject> programs = new ArrayList<>();
+    // Används för att hämta genom ID
 
-        for(Map program : contentMap){
+    public List<GenericObject> getAllOptionsById(String pathOption, String responseOption, int id){
+        RestTemplate template = new RestTemplate();
 
-            GenericObject generic = new GenericObject(
-                    program.get("id"),
-                    program.get("name"),
-                    program.get("programimage"),
-                    program.get("programurl"),
-                    program.get("description"),
-                    program.get("responsibleeditor")
-            );
+        Map response = template.getForObject(sverigesRadioApi + pathOption + id + jsonFormat2, Map.class);
+
+        List<Map> contentMap = (List<Map>) response.get(responseOption);
 
 
-            programs.add(generic);
+        switch (pathOption) {
+            case "programs/index?channelid=":
+                return getProgramsByChannelId(contentMap);
+            case "programs/index?programcategoryid=":
+                return getProgramsByCategoryId(contentMap);
+
         }
 
-        return programs;
-
+        return null;
     }
 
     private List<GenericObject> getAllChannels(List<Map> contentMap){
@@ -137,9 +135,49 @@ public class UserService {
     public List<User> getAll(){
         return userRepo.findAll();
     }
-    /*
-        här kan vi även lägga till en whoami metod för att visa aktiv användre
-     */
 
+
+    private List<GenericObject> getProgramsByChannelId(List<Map> contentMap) {
+
+
+        List<GenericObject> allPrograms = new ArrayList<>();
+
+        for(Map program : contentMap){
+
+            GenericObject generic = new GenericObject(
+                    program.get("id"),
+                    program.get("name"),
+                    program.get("programimage"),
+                    program.get("programurl"),
+                    program.get("description"),
+                    program.get("responsibleeditor")
+            );
+            allPrograms.add(generic);
+        }
+
+        return allPrograms;
+
+    }
+    private List<GenericObject> getProgramsByCategoryId(List<Map> contentMap) {
+
+
+        List<GenericObject> allPrograms = new ArrayList<>();
+
+        for(Map program : contentMap){
+
+            GenericObject generic = new GenericObject(
+                    program.get("id"),
+                    program.get("name"),
+                    program.get("programimage"),
+                    program.get("programurl"),
+                    program.get("description"),
+                    program.get("responsibleeditor")
+            );
+            allPrograms.add(generic);
+        }
+
+        return allPrograms;
+
+    }
 
 }
