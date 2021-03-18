@@ -1,14 +1,12 @@
 package com.example.demo.controllers;
 
 import com.example.demo.configs.GenericObject;
-import com.example.demo.entities.Friend;
 import com.example.demo.entities.User;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 public class UserController {
@@ -36,7 +34,11 @@ public class UserController {
     @GetMapping("/rest/getProgramsByCategoryId/{id}")
     public List<GenericObject> getProgramsByCategoryId(@PathVariable int id){return userService.getAllOptionsById("programs/index?programcategoryid=", "programs", id);}
 
-
+    // Userstory 6 Fungerar
+    @GetMapping("/rest/searchProgram/{input}")
+    public List<GenericObject> searchProgram(@PathVariable String input){
+        return userService.searchProgram(input);
+    }
 
     // ----->
     @PostMapping("/rest/register")

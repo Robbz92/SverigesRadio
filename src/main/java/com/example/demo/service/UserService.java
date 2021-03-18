@@ -136,7 +136,6 @@ public class UserService {
         return userRepo.findAll();
     }
 
-
     private List<GenericObject> getProgramsByChannelId(List<Map> contentMap) {
 
 
@@ -158,6 +157,7 @@ public class UserService {
         return allPrograms;
 
     }
+
     private List<GenericObject> getProgramsByCategoryId(List<Map> contentMap) {
 
 
@@ -178,6 +178,39 @@ public class UserService {
 
         return allPrograms;
 
+    }
+
+    //Söka på program
+
+    public List<GenericObject> searchProgram(String input){
+
+        List<GenericObject> programs = new ArrayList<>();
+
+        RestTemplate template = new RestTemplate();
+        Map response = template.getForObject(sverigesRadioApi + "programs" + jsonFormatPagiFalse, Map.class);
+
+        List<Map> contentMap = (List<Map>) response.get("programs");
+
+        for(Map program : contentMap){
+            String name= (String) program.get("name"); // Filtrerar genom program-namn
+            String description = (String) program.get("description"); // Filtrerar genom program-beskrivning
+
+            if(name.toLowerCase().contains(input.toLowerCase()) || description.toLowerCase().contains(input.toLowerCase())){
+                GenericObject generic = new GenericObject(
+                        program.get("id"),
+                        program.get("name"),
+                        program.get("programimage"),
+                        program.get("programurl"),
+                        program.get("description"),
+                        program.get("responsibleeditor")
+                );
+
+                programs.add(generic);
+
+            }
+
+        }
+        return programs;
     }
 
 }
