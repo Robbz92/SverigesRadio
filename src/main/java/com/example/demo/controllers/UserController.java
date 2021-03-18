@@ -1,7 +1,5 @@
 package com.example.demo.controllers;
 
-import com.example.demo.configs.GenericObject;
-import com.example.demo.entities.Friend;
 import com.example.demo.entities.User;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,27 +14,35 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    // Userstory 1
+    // Userstory 1 Fungerar
     @GetMapping("/rest/getAllChannels")
-    public List<GenericObject> getAllChannels(){return userService.getAllOptions("channels", "channels");}
+    public List<Map> getAllChannels(){return userService.getAllOptions("channels", "channels");}
 
-    // Userstory 2
+    // Userstory 2 Fungerar // fixa date formatet
     @GetMapping("/rest/getAllBroadcasts")
-    public List<GenericObject> getAllBroadcasts(){return userService.getAllOptions("scheduledepisodes/rightnow", "channels");}
+    public List<Map> getAllBroadcasts(){return userService.getAllOptions("scheduledepisodes/rightnow", "channels");}
 
-    // Userstory 3 Fungerar
+    // Userstory 3 Fungerar 163
     @GetMapping("/rest/getProgramsByChannelId/{id}")
-    public List<GenericObject> getProgramsByChannelId(@PathVariable int id){return userService.getAllOptionsById("programs/index?channelid=", "programs", id);}
+    public List<Map> getProgramsByChannelId(@PathVariable int id){return userService.getAllOptionsById("programs/index?channelid=", "programs", id);}
 
-    // Userstory 4 Fungerar (kolla in på null?)
+    // Userstory 4 Fungerar
     @GetMapping("/rest/getAllCategories")
-    public List<GenericObject> getAllCategorie(){return userService.getAllOptions("programcategories", "programcategories");}
+    public List<Map> getAllCategorie(){return userService.getAllOptions("programcategories", "programcategories");}
 
     // Userstory 5 Fungerar
     @GetMapping("/rest/getProgramsByCategoryId/{id}")
-    public List<GenericObject> getProgramsByCategoryId(@PathVariable int id){return userService.getAllOptionsById("programs/index?programcategoryid=", "programs", id);}
+    public List<Map> getProgramsByCategoryId(@PathVariable int id){return userService.getAllOptionsById("programs/index?programcategoryid=", "programs", id);}
 
+    // Userstory 6 Fungerar
+    @GetMapping("/rest/searchProgram/{input}")
+    public List<Map> searchProgram(@PathVariable String input){
+        return userService.searchProgram(input);
+    }
 
+    // Userstory 7 // Fungerar
+    @GetMapping("/rest/getDescriptionById/{id}")
+    public Map getDescriptionById(@PathVariable int id){return userService.getDescriptionById( id);}
 
     // ----->
     @PostMapping("/rest/register")
@@ -44,10 +50,10 @@ public class UserController {
         return userService.register(user);
     }
 
-    @GetMapping("/rest/getAllFriends")
+    // kontrollera att bara vänner kan se varandra.
+    @GetMapping("/auth/getAllFriends")
     public List<User> getAllFriends(){
         return userService.getAll();
     }
-
 
 }

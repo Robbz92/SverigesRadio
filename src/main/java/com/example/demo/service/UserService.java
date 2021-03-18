@@ -1,10 +1,10 @@
 package com.example.demo.service;
 
-import com.example.demo.configs.GenericObject;
 import com.example.demo.configs.MyUserDetailsService;
 import com.example.demo.entities.User;
 import com.example.demo.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.json.GsonBuilderUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -26,17 +26,16 @@ public class UserService {
 
     private String sverigesRadioApi = "http://api.sr.se/api/v2/";
     private String jsonFormatPagiFalse = "/?format=json&pagination=false";
-    private String jsonFormat = "/?format=json";
+    private String jsonFormat = "?format=json";
     private String jsonFormat2 = "&format=json&pagination=false";
 
     // Används för att hämta ALLT
-    public List<GenericObject> getAllOptions(String pathOption, String responseOption){
+    public List<Map> getAllOptions(String pathOption, String responseOption){
         RestTemplate template = new RestTemplate();
 
         Map response = template.getForObject(sverigesRadioApi + pathOption + jsonFormatPagiFalse, Map.class);
 
         List<Map> contentMap = (List<Map>) response.get(responseOption);
-
 
         switch (pathOption) {
             case "channels":
@@ -51,58 +50,71 @@ public class UserService {
     }
 
     // Används för att hämta genom ID
-
-    public List<GenericObject> getAllOptionsById(String pathOption, String responseOption, int id){
+    public List<Map> getAllOptionsById(String pathOption, String responseOption, int id){
         RestTemplate template = new RestTemplate();
 
+        //använd GenericObject ist för map. list = Arrays.asList(contentMap)
         Map response = template.getForObject(sverigesRadioApi + pathOption + id + jsonFormat2, Map.class);
 
         List<Map> contentMap = (List<Map>) response.get(responseOption);
-
 
         switch (pathOption) {
             case "programs/index?channelid=":
                 return getProgramsByChannelId(contentMap);
             case "programs/index?programcategoryid=":
                 return getProgramsByCategoryId(contentMap);
-
         }
 
         return null;
     }
 
-    private List<GenericObject> getAllChannels(List<Map> contentMap){
-        List<GenericObject> channels = new ArrayList<>();
+    public Map getDescriptionById(int id) {
+        /*
+            Hämtar bara ut ett objekt här.
+         */
+
+        RestTemplate template = new RestTemplate();
+
+        Map response = template.getForObject(sverigesRadioApi + "programs/" + id + "?format=json", Map.class);
+
+        Map program = (Map) response.get("program");
+
+        Map description = Map.of(
+            "description" , program.get("description"),
+            "broadcastinfo", program.get("broadcastinfo")
+        );
+
+        return description;
+    }
+
+    private List<Map> getAllChannels(List<Map> contentMap){
+        List<Map> channels = new ArrayList<>();
 
         for(Map channel : contentMap){
 
-            GenericObject generic = new GenericObject(
-                    channel.get("id"),
-                    channel.get("name"),
-                    channel.get("image"),
-                    channel.get("tagline"),
-                    channel.get("siteurl"),
-                    channel.get("scheduleurl")
+            Map generic = Map.of(
+                "id", channel.get("id"),
+                "name", channel.get("name"),
+                "image", channel.get("image") != null ? channel.get("image") : "https://static-cdn.sr.se/images/2386/d05d0580-43ed-48ef-991b-01b536e03b33.jpg?preset=api-default-square",
+                "tagline", channel.get("tagline"),
+                "scheduleurl", channel.get("scheduleurl") != null ? channel.get("scheduleurl") : "",
+                "siteurl", channel.get("siteurl")
             );
-
-
             channels.add(generic);
         }
 
         return channels;
     }
 
-    private List<GenericObject> getAllCategories(List<Map> contentMap){
-        List<GenericObject> channels = new ArrayList<>();
+    private List<Map> getAllCategories(List<Map> contentMap){
+        List<Map> channels = new ArrayList<>();
 
         for(Map channel : contentMap){
 
-            GenericObject generic = new GenericObject(
-                    channel.get("id"),
-                    channel.get("name")
+            Map generic = Map.of(
+                "id" , channel.get("id"),
+                "name", channel.get("name")
             );
-
-
             channels.add(generic);
         }
 
@@ -110,18 +122,26 @@ public class UserService {
     }
 
     // kopplad med getAllOptions
-    private List<GenericObject> getAllBroadcasts(List<Map> contentMap) {
-        List<GenericObject> broadcasts = new ArrayList<>();
+    private List<Map> getAllBroadcasts(List<Map> contentMap) {
+        List<Map> broadcasts = new ArrayList<>();
 
+        // list + objekt
         for(Map broadcast : contentMap){
+            if(broadcast.get("nextscheduledepisode") == null){
+                continue;
+            }
 
-            GenericObject generic = new GenericObject(
-                    broadcast.get("id"),
-                    broadcast.get("name"),
-                    broadcast.get("programimage"),
-                    broadcast.get("programurl"),
-                    broadcast.get("description"),
-                    broadcast.get("responsibleeditor")
+            Map nextscheduledepisode = (Map) broadcast.get("nextscheduledepisode");
+            String title = (String)nextscheduledepisode.get("title");
+            String description = (String) nextscheduledepisode.get("description");
+            String starttimeutc = (String) nextscheduledepisode.get("starttimeutc");
+
+            Map generic = Map.of(
+                "id" , broadcast.get("id"),
+                "name", broadcast.get("name"),
+                "title", title,
+                "description", description,
+                "starttimeutc", starttimeutc
             );
 
             broadcasts.add(generic);
@@ -130,54 +150,83 @@ public class UserService {
         return broadcasts;
     }
 
+    private List<Map> getProgramsByChannelId(List<Map> contentMap) {
+
+        List<Map> allPrograms = new ArrayList<>();
+
+        for(Map program : contentMap){
+
+            Map generic = Map.of(
+                "id" , program.get("id"),
+                "name", program.get("name"),
+                "programimage", program.get("programimage"),
+                "programurl", program.get("programurl"),
+                "description", program.get("description"),
+                "responsibleeditor", program.get("responsibleeditor")
+            );
+
+            allPrograms.add(generic);
+        }
+
+        return allPrograms;
+
+    }
+
+    private List<Map> getProgramsByCategoryId(List<Map> contentMap) {
+
+        List<Map> allPrograms = new ArrayList<>();
+
+        for(Map program : contentMap){
+
+            Map generic = Map.of(
+                    "id" , program.get("id"),
+                    "name", program.get("name"),
+                    "programimage", program.get("programimage"),
+                    "programurl", program.get("programurl"),
+                    "description", program.get("description"),
+                    "responsibleeditor", program.get("responsibleeditor")
+            );
+            allPrograms.add(generic);
+        }
+
+        return allPrograms;
+
+    }
+
+    public List<Map> searchProgram(String input) {
+        List<Map> programs = new ArrayList<>();
+
+        RestTemplate template = new RestTemplate();
+        Map response = template.getForObject(sverigesRadioApi + "programs" + jsonFormatPagiFalse, Map.class);
+
+        List<Map> contentMap = (List<Map>) response.get("programs");
+
+        for(Map program : contentMap){
+            String name= (String) program.get("name"); // Filtrerar genom program-namn
+            String description = (String) program.get("description"); // Filtrerar genom program-beskrivning
+
+            if(name.toLowerCase().contains(input.toLowerCase()) || description.toLowerCase().contains(input.toLowerCase())){
+                Map generic = Map.of(
+                    "id",program.get("id"),
+                    "name",program.get("name"),
+                    "programimage",program.get("programimage"),
+                    "programurl",program.get("programurl"),
+                    "description", program.get("description"),
+                    "responsibleeditor",program.get("responsibleeditor")
+                );
+
+                programs.add(generic);
+
+            }
+
+        }
+        return programs;
+    }
+
     public User register(User user){return myUserDetailsService.registerUser(user);}
 
     public List<User> getAll(){
         return userRepo.findAll();
-    }
-
-
-    private List<GenericObject> getProgramsByChannelId(List<Map> contentMap) {
-
-
-        List<GenericObject> allPrograms = new ArrayList<>();
-
-        for(Map program : contentMap){
-
-            GenericObject generic = new GenericObject(
-                    program.get("id"),
-                    program.get("name"),
-                    program.get("programimage"),
-                    program.get("programurl"),
-                    program.get("description"),
-                    program.get("responsibleeditor")
-            );
-            allPrograms.add(generic);
-        }
-
-        return allPrograms;
-
-    }
-    private List<GenericObject> getProgramsByCategoryId(List<Map> contentMap) {
-
-
-        List<GenericObject> allPrograms = new ArrayList<>();
-
-        for(Map program : contentMap){
-
-            GenericObject generic = new GenericObject(
-                    program.get("id"),
-                    program.get("name"),
-                    program.get("programimage"),
-                    program.get("programurl"),
-                    program.get("description"),
-                    program.get("responsibleeditor")
-            );
-            allPrograms.add(generic);
-        }
-
-        return allPrograms;
-
     }
 
 }
