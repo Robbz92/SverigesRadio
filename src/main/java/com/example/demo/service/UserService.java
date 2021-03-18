@@ -3,12 +3,20 @@ package com.example.demo.service;
 import com.example.demo.configs.MyUserDetailsService;
 import com.example.demo.entities.User;
 import com.example.demo.repositories.UserRepo;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.json.GsonBuilderUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -63,6 +71,8 @@ public class UserService {
                 return getProgramsByChannelId(contentMap);
             case "programs/index?programcategoryid=":
                 return getProgramsByCategoryId(contentMap);
+            case "broadcasts?programid=":
+                return getProgramBroadcasts(contentMap);
         }
 
         return null;
@@ -223,10 +233,43 @@ public class UserService {
         return programs;
     }
 
+    public List<Map> getProgramBroadcasts(List<Map> contentMap) {
+        List<Map> broadCasts = new ArrayList<>();
+
+        DateTimeFormatter jsonDateFormatter = new DateTimeFormatterBuilder()
+                .appendLiteral("/Date(")
+                .appendValue(ChronoField.INSTANT_SECONDS)
+                .appendValue(ChronoField.MILLI_OF_SECOND, 3)
+                .appendLiteral(")/")
+                .toFormatter();
+
+        for(Map broadCast : contentMap){
+
+            String broadcastDateUtc = (String)broadCast.get("broadcastdateutc");
+            Instant date = jsonDateFormatter.parse(broadcastDateUtc, Instant::from);
+
+            String formattedDate = date.toString();
+
+            Map generic = Map.of(
+                    "id", broadCast.get("id"),
+                    "title", broadCast.get("title"),
+                    "broadcastdateutc", formattedDate.replace("T"," ").replace("Z",""),
+                    "totalduration", broadCast.get("totalduration"),
+                    "image", broadCast.get("image")
+
+            );
+
+            broadCasts.add(generic);
+        }
+
+        return broadCasts;
+    }
+
     public User register(User user){return myUserDetailsService.registerUser(user);}
 
     public List<User> getAll(){
         return userRepo.findAll();
     }
+
 
 }

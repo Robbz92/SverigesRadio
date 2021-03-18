@@ -42,11 +42,16 @@ public class UserController {
 
     // Userstory 7 // Fungerar
     @GetMapping("/rest/getDescriptionById/{id}")
-    public Map getDescriptionById(@PathVariable int id){return userService.getDescriptionById( id);}
+    public Map getDescriptionById(@PathVariable int id){return userService.getDescriptionById(id);}
+
+    // Userstory 8
+    @GetMapping("/rest/getProgramBroadcasts/{id}")
+    public List<Map> getProgramBroadcasts(@PathVariable int id){return userService.getAllOptionsById("broadcasts?programid=","broadcasts", id);}
 
     // ----->
     @PostMapping("/rest/register")
     public User register(@RequestBody User user){
+
         return userService.register(user);
     }
 
