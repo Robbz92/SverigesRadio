@@ -26,7 +26,7 @@ public class ServiceConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/", "/rest/**").permitAll()
                 .antMatchers("/auth/**").authenticated()
-                .antMatchers("/rest/**").authenticated()
+                .antMatchers("/rest/**").permitAll()
                 .and()
                 .formLogin()
                 //.loginPage("/login") // vår egna login sida
