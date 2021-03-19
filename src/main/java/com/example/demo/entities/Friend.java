@@ -1,8 +1,6 @@
 package com.example.demo.entities;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.persistence.*;
 
 @Entity
@@ -16,13 +14,21 @@ public class Friend {
     private String email;
     private String firstName;
 
+    @Column(name = "user")
+    private long userId;
+
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user_id;
+    @JoinColumn(name = "user", insertable = false,updatable = false)
+    private User user;
+
+    public Friend(String email, String firstName, long userId) {
+        this.email = email;
+        this.firstName = firstName;
+        this.userId = userId;
+    }
 
     public Friend() {
     }
-
 
     public long getFriendId() {
         return friendId;
@@ -49,13 +55,23 @@ public class Friend {
     }
 
     @JsonIgnore
-    public User getUserId() {
-        return user_id;
+    public long getUserId() {
+        return userId;
     }
 
     @JsonProperty
-    public void setUserId(User user) {
-        this.user_id = user_id;
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    @JsonIgnore
+    public User getUser() {
+        return user;
+    }
+
+    @JsonProperty
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override
@@ -64,7 +80,7 @@ public class Friend {
                 "friendId=" + friendId +
                 ", email='" + email + '\'' +
                 ", firstName='" + firstName + '\'' +
-                ", user_id=" + user_id +
+                ", user_id=" + user +
                 '}';
     }
 }
