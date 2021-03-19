@@ -30,6 +30,10 @@ public class Friend {
     public Friend() {
     }
 
+    public Friend(long friendId) {
+        this.friendId = friendId;
+    }
+
     public long getFriendId() {
         return friendId;
     }
