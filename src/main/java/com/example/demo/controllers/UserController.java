@@ -1,5 +1,6 @@
 package com.example.demo.controllers;
 
+import com.example.demo.entities.Friend;
 import com.example.demo.entities.User;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ public class UserController {
 
     // Userstory 4 Fungerar
     @GetMapping("/rest/getAllCategories")
-    public List<Map> getAllCategorie(){return userService.getAllOptions("programcategories", "programcategories");}
+    public List<Map> getAllCategories(){return userService.getAllOptions("programcategories", "programcategories");}
 
     // Userstory 5 Fungerar
     @GetMapping("/rest/getProgramsByCategoryId/{id}")
@@ -42,13 +43,21 @@ public class UserController {
 
     // Userstory 7 // Fungerar
     @GetMapping("/rest/getDescriptionById/{id}")
-    public Map getDescriptionById(@PathVariable int id){return userService.getDescriptionById( id);}
+    public Map getDescriptionById(@PathVariable int id){return userService.getDescriptionById(id);}
+
+    // Userstory 8
+    @GetMapping("/rest/getProgramBroadcasts/{id}")
+    public List<Map> getProgramBroadcasts(@PathVariable int id){return userService.getAllOptionsById("broadcasts?programid=","broadcasts", id);}
 
     // ----->
     @PostMapping("/rest/register")
     public User register(@RequestBody User user){
+
         return userService.register(user);
     }
+
+    @GetMapping("/auth/whoami")
+    public User whoAmI(){return userService.whoAmI();}
 
     // kontrollera att bara vänner kan se varandra.
     @GetMapping("/auth/getAllFriends")
