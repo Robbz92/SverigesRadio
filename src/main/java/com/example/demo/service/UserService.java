@@ -1,11 +1,13 @@
 package com.example.demo.service;
 
 import com.example.demo.configs.MyUserDetailsService;
+import com.example.demo.entities.Friend;
 import com.example.demo.entities.User;
 import com.example.demo.repositories.UserRepo;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.json.GsonBuilderUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -271,5 +273,8 @@ public class UserService {
         return userRepo.findAll();
     }
 
-
+    public User whoAmI(){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepo.findByEmail(email);
+    }
 }

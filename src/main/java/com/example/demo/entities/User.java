@@ -1,7 +1,6 @@
 package com.example.demo.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
@@ -13,15 +12,18 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="user_id")
-    private long userid;
+    private long userId;
     private String email;
     private String password;
     private String firstName;
     private String lastName;
 
-    @JsonIgnoreProperties("user")
-    @OneToMany(mappedBy = "user_id", fetch = FetchType.EAGER)
+
+    @OneToMany(mappedBy = "user")
     private List<Friend> friends;
+
+    @OneToMany(mappedBy = "user")
+    private List<Favorite> favorites;
 
     public User() {
     }
@@ -33,12 +35,12 @@ public class User {
         this.lastName = lastName;
     }
 
-    public long getUserid() {
-        return userid;
+    public long getUserId() {
+        return userId;
     }
 
-    public void setUserid(long userid) {
-        this.userid = userid;
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
     public String getEmail() {
@@ -75,13 +77,21 @@ public class User {
         this.lastName = lastName;
     }
 
+    @JsonIgnore
     public List<Friend> getFriends() {
         return friends;
     }
 
+    @JsonProperty
     public void setFriends(List<Friend> friends) {
         this.friends = friends;
     }
+
+    @JsonIgnore
+    public List<Favorite> getFavorites() {return favorites;}
+
+    @JsonProperty
+    public void setFavorites(List<Favorite> favorites) {this.favorites = favorites;}
 
     @Override
     public String toString() {
