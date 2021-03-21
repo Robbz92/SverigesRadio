@@ -15,12 +15,65 @@ public class Favorite {
     private long favoriteId;
 
     private String url;
+    private String name;
+    private String image;
+
+    @Column(name = "user")
+    private long userId;
 
     @ManyToOne
-    @JoinColumn(name = "user")
+    @JoinColumn(name = "user", insertable = false, updatable = false)
     private User user;
 
     public Favorite(){}
+
+
+    public Favorite(String url, String image, String name, long userId) {
+        this.url = url;
+        this.image = image;
+        this.name = name;
+        this.userId = userId;
+    }
+
+    public Favorite(long favoriteId) {
+        this.favoriteId = favoriteId;
+    }
+
+    @JsonIgnore
+    public long getFavoriteId() {
+        return favoriteId;
+    }
+
+    @JsonProperty
+    public void setFavoriteId(long favoriteId) {
+        this.favoriteId = favoriteId;
+    }
+
+    @JsonIgnore
+    public long getUserId() {
+        return userId;
+    }
+
+    @JsonProperty
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 
     public String getUrl() {return url;}
 

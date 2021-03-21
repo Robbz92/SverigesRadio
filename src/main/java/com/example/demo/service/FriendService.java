@@ -31,4 +31,16 @@ public class FriendService {
         }
         return null;
     }
+
+    public void removeFriend(long id){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepo.findByEmail(email);
+        long userId = user.getUserId();
+
+        if(userRepo.existsById(userId)){
+            Friend friendID = new Friend(id);
+
+            friendRepo.delete(friendID);
+        }
+    }
 }

@@ -262,6 +262,19 @@ public class UserService {
             );
 
             broadCasts.add(generic);
+
+            // skicka url till friends. samt egna favorites.
+            // hämtar url för sändningar.
+            if(broadCast.get("broadcastfiles") != null){
+                List<Map> broadCastFiles = (List<Map>) broadCast.get("broadcastfiles");
+                for(Map broadCastList : broadCastFiles){
+
+                    Map broadCastFiles1 = Map.of(
+                         "url" , broadCastList.get("url")
+                    );
+                    broadCasts.add(broadCastFiles1);
+                }
+            }
         }
 
         return broadCasts;
