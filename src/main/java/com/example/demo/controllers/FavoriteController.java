@@ -7,17 +7,34 @@ import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
+
 @RestController
 public class FavoriteController {
 
     @Autowired
     private FavoriteService favoriteService;
 
+    //Userstory 11
     @PostMapping("/auth/favorite")
     public Favorite addFavorite(@RequestBody Favorite favorite){return favoriteService.addFavorite(favorite);}
 
-    @DeleteMapping("/auth/deleteFavorite/{id}")
-    public void deleteFavorite(@PathVariable long id){favoriteService.deleteFavorite(id);}
+    //Userstory 12 -> Genom detta får vi type av favorite d v s programs eller broadcasts
+    // HÄMTAR BARA FAVORITER TILL DEN INLOGGADE ANVÄNDAREN-> FUNGERAR
+    @GetMapping("/auth/getMyFavoritesType")
+    public List<Map> getFavorites(){
+        return favoriteService.getMyFavorites();
+    }
 
-    // get favories.....
+    @GetMapping("/auth/getMyFavorites")
+    public List<Favorite> getJustFavorites(){
+        return favoriteService.getJustMyFavorites();
+    }
+
+    //Har Fixat funtionen i favoriteService -> NU FUNGERAR KORREKT!
+    @DeleteMapping("/auth/deleteFavorite/{id}")
+    public String deleteFavorite(@PathVariable long id){return favoriteService.deleteFavorite(id);}
+
+
 }
