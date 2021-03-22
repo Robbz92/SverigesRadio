@@ -2,10 +2,14 @@ package com.example.demo.controllers;
 
 import com.example.demo.entities.Friend;
 import com.example.demo.entities.User;
+import com.example.demo.repositories.FriendRepo;
+import com.example.demo.repositories.UserRepo;
+import com.example.demo.service.FriendService;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +18,15 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private FriendService friendService;
+
+    @Autowired
+    private UserRepo userRepo;
+
+    @Autowired
+    private FriendRepo friendRepo;
 
     // Userstory 1 Fungerar
     @GetMapping("/rest/getAllChannels")
@@ -50,6 +63,8 @@ public class UserController {
     public List<Map> getProgramBroadcasts(@PathVariable int id){return userService.getAllOptionsById("broadcasts?programid=","broadcasts", id);}
 
     // ----->
+
+    // Userstory 9
     @PostMapping("/rest/register")
     public User register(@RequestBody User user){
 
@@ -57,12 +72,11 @@ public class UserController {
     }
 
     @GetMapping("/auth/whoami")
-    public User whoAmI(){return userService.whoAmI();}
-
-    // kontrollera att bara vänner kan se varandra.
-    @GetMapping("/auth/getAllFriends")
-    public List<User> getAllFriends(){
-        return userService.getAll();
+    public User whoAmI(){
+        return userService.whoAmI();
     }
+
+
+
 
 }

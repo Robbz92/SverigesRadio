@@ -209,6 +209,7 @@ public class UserService {
         List<Map> programs = new ArrayList<>();
 
         RestTemplate template = new RestTemplate();
+
         Map response = template.getForObject(sverigesRadioApi + "programs" + jsonFormatPagiFalse, Map.class);
 
         List<Map> contentMap = (List<Map>) response.get("programs");
@@ -282,12 +283,9 @@ public class UserService {
 
     public User register(User user){return myUserDetailsService.registerUser(user);}
 
-    public List<User> getAll(){
-        return userRepo.findAll();
-    }
-
     public User whoAmI(){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepo.findByEmail(email);
     }
+
 }
