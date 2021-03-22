@@ -294,4 +294,34 @@ public class UserService {
         return userRepo.findByEmail(email);
     }
 
+    public List<User> getAllUsers() {
+        return userRepo.findAll();
+    }
+
+    public User addFriend(User friend) {
+        User user = whoAmI();
+        if(user != null){
+            user.addFriend(friend);
+            return userRepo.save(user);
+        }
+        return null;
+    }
+
+    public String deleteFriendById (long id){
+            User user = whoAmI();
+            long userId = user.getUserId();
+
+            if (user != null) {
+
+                if (userRepo.existsById(id)) {
+                    user.removeFriend(id);
+                    userRepo.deleteFriend(id, userId);
+
+                    return "Deleted";
+                }
+
+            }
+            return "The friend does not exist!";
+    }
+
 }

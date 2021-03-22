@@ -68,6 +68,7 @@ public class FavoriteService {
 
         return filterFavoritesType(favorites);
     }
+    
     public List<Map> filterFavoritesType(List<Favorite> favorites){
         List<Map> filteredFavos = new ArrayList<>();
 

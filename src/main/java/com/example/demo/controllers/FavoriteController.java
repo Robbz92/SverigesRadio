@@ -15,7 +15,7 @@ public class FavoriteController {
     private FavoriteService favoriteService;
 
     //Userstory 11
-    @PostMapping("/auth/favorite")
+    @PostMapping("/auth/favorites")
     public Favorite addFavorite(@RequestBody Favorite favorite){return favoriteService.addFavorite(favorite);}
 
     //Userstory 12 -> Genom detta får vi type av favorite d v s programs eller broadcasts

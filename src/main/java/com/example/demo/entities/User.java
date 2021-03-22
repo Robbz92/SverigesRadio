@@ -3,6 +3,7 @@ package com.example.demo.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.List;
@@ -19,8 +20,25 @@ public class User {
     private String firstName;
     private String lastName;
 
+    @ManyToMany
+    @JoinTable(
+            name = "friends", // cross table
+            joinColumns = @JoinColumn(name = "user"), // user column
+            inverseJoinColumns = @JoinColumn(name = "friend_id") // the friend column
+    )
+    @JsonIgnoreProperties("friends") // ignore the property from the related entity
+    private List<User> friends;
+
     @OneToMany(mappedBy = "user")
     private List<Favorite> favorites;
+
+    public void addFriend(User user){
+        friends.add(user);
+    }
+
+    public void removeFriend(long id){
+        friends.remove(id);
+    }
 
     public User() {
     }
@@ -74,6 +92,14 @@ public class User {
         this.lastName = lastName;
     }
 
+    public List<User> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(List<User> friends) {
+        this.friends = friends;
+    }
+
     public List<Favorite> getFavorites() {return favorites;}
 
     @JsonProperty
@@ -88,4 +114,7 @@ public class User {
                 ", lastName='" + lastName + '\'' +
                 '}';
     }
+
+
+
 }
