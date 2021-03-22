@@ -1,24 +1,18 @@
 package com.example.demo.service;
 
 import com.example.demo.configs.MyUserDetailsService;
-import com.example.demo.entities.Friend;
 import com.example.demo.entities.User;
 import com.example.demo.repositories.UserRepo;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.converter.json.GsonBuilderUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -286,6 +280,36 @@ public class UserService {
     public User whoAmI(){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepo.findByEmail(email);
+    }
+
+    public List<User> getAllUsers() {
+        return userRepo.findAll();
+    }
+
+    public User addFriend(User friend) {
+        User user = whoAmI();
+        if(user != null){
+            user.addFriend(friend);
+            return userRepo.save(user);
+        }
+        return null;
+    }
+
+    public String deleteFriendById (long id){
+            User user = whoAmI();
+            long userId = user.getUserId();
+
+            if (user != null) {
+
+                if (userRepo.existsById(id)) {
+                    user.removeFriend(id);
+                    userRepo.deleteFriend(id, userId);
+
+                    return "Deleted";
+                }
+
+            }
+            return "The friend does not exist!";
     }
 
 }

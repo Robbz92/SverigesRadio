@@ -1,9 +1,7 @@
 package com.example.demo.controllers;
 
 import com.example.demo.entities.Favorite;
-import com.example.demo.entities.Friend;
 import com.example.demo.service.FavoriteService;
-import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +15,7 @@ public class FavoriteController {
     private FavoriteService favoriteService;
 
     //Userstory 11
-    @PostMapping("/auth/favorite")
+    @PostMapping("/auth/favorites")
     public Favorite addFavorite(@RequestBody Favorite favorite){return favoriteService.addFavorite(favorite);}
 
     //Userstory 12 -> Genom detta får vi type av favorite d v s programs eller broadcasts
@@ -25,11 +23,6 @@ public class FavoriteController {
     @GetMapping("/auth/getMyFavoritesType")
     public List<Map> getFavorites(){
         return favoriteService.getMyFavorites();
-    }
-
-    @GetMapping("/auth/getMyFavorites")
-    public List<Favorite> getJustFavorites(){
-        return favoriteService.getJustMyFavorites();
     }
 
     //Har Fixat funtionen i favoriteService -> NU FUNGERAR KORREKT!
