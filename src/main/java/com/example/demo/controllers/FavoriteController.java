@@ -1,9 +1,7 @@
 package com.example.demo.controllers;
 
 import com.example.demo.entities.Favorite;
-import com.example.demo.entities.Friend;
 import com.example.demo.service.FavoriteService;
-import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,14 +25,8 @@ public class FavoriteController {
         return favoriteService.getMyFavorites();
     }
 
-    @GetMapping("/auth/getMyFavorites")
-    public List<Favorite> getJustFavorites(){
-        return favoriteService.getJustMyFavorites();
-    }
-
     //Har Fixat funtionen i favoriteService -> NU FUNGERAR KORREKT!
     @DeleteMapping("/auth/deleteFavorite/{id}")
     public String deleteFavorite(@PathVariable long id){return favoriteService.deleteFavorite(id);}
-
 
 }

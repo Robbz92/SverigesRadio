@@ -1,7 +1,6 @@
 package com.example.demo.service;
 
 import com.example.demo.entities.Favorite;
-import com.example.demo.entities.Friend;
 import com.example.demo.entities.User;
 import com.example.demo.repositories.FavoriteRepo;
 import com.example.demo.repositories.UserRepo;
@@ -100,9 +99,4 @@ public class FavoriteService {
         return filteredFavos;
     }
 
-    ////Om vi bestämmer oss för att hämta användares favoriter utan att filtrera type dvs programs och broadcasts
-    public List<Favorite> getJustMyFavorites() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return favoriteRepo.allMyFavoritesByEmail(email);
-    }
 }

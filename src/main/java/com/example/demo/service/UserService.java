@@ -1,24 +1,18 @@
 package com.example.demo.service;
 
 import com.example.demo.configs.MyUserDetailsService;
-import com.example.demo.entities.Friend;
 import com.example.demo.entities.User;
 import com.example.demo.repositories.UserRepo;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.converter.json.GsonBuilderUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -137,6 +131,14 @@ public class UserService {
     private List<Map> getAllBroadcasts(List<Map> contentMap) {
         List<Map> broadcasts = new ArrayList<>();
 
+        // Formaterar Json-Date till en String
+        DateTimeFormatter jsonDateFormatter = new DateTimeFormatterBuilder()
+                .appendLiteral("/Date(")
+                .appendValue(ChronoField.INSTANT_SECONDS)
+                .appendValue(ChronoField.MILLI_OF_SECOND, 3)
+                .appendLiteral(")/")
+                .toFormatter();
+
         // list + objekt
         for(Map broadcast : contentMap){
             if(broadcast.get("nextscheduledepisode") == null){
@@ -148,12 +150,15 @@ public class UserService {
             String description = (String) nextscheduledepisode.get("description");
             String starttimeutc = (String) nextscheduledepisode.get("starttimeutc");
 
+            Instant date = jsonDateFormatter.parse(starttimeutc, Instant::from);
+            String formattedDate = date.toString();
+
             Map generic = Map.of(
                 "id" , broadcast.get("id"),
                 "name", broadcast.get("name"),
                 "title", title,
                 "description", description,
-                "starttimeutc", starttimeutc
+                "starttimeutc", formattedDate.replace("T"," ").replace("Z","")
             );
 
             broadcasts.add(generic);
@@ -239,6 +244,7 @@ public class UserService {
     public List<Map> getProgramBroadcasts(List<Map> contentMap) {
         List<Map> broadCasts = new ArrayList<>();
 
+        // Formaterar Json-Date till en String
         DateTimeFormatter jsonDateFormatter = new DateTimeFormatterBuilder()
                 .appendLiteral("/Date(")
                 .appendValue(ChronoField.INSTANT_SECONDS)
