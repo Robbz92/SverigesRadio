@@ -19,10 +19,6 @@ public class User {
     private String firstName;
     private String lastName;
 
-
-    @OneToMany(mappedBy = "user")
-    private List<Friend> friends;
-
     @OneToMany(mappedBy = "user")
     private List<Favorite> favorites;
 
@@ -78,17 +74,6 @@ public class User {
         this.lastName = lastName;
     }
 
-    @JsonIgnore
-    public List<Friend> getFriends() {
-        return friends;
-    }
-
-    @JsonProperty
-    public void setFriends(List<Friend> friends) {
-        this.friends = friends;
-    }
-
-    @JsonIgnore
     public List<Favorite> getFavorites() {return favorites;}
 
     @JsonProperty
@@ -101,7 +86,6 @@ public class User {
                 ", password='" + password + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
-                ", friends=" + friends +
                 '}';
     }
 }
