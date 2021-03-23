@@ -3,8 +3,6 @@ package com.example.demo.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.hibernate.annotations.Cascade;
-
 import javax.persistence.*;
 import java.util.List;
 
@@ -92,14 +90,17 @@ public class User {
         this.lastName = lastName;
     }
 
+    @JsonIgnore
     public List<User> getFriends() {
         return friends;
     }
 
+    @JsonProperty
     public void setFriends(List<User> friends) {
         this.friends = friends;
     }
 
+    @JsonIgnore
     public List<Favorite> getFavorites() {return favorites;}
 
     @JsonProperty
@@ -114,7 +115,4 @@ public class User {
                 ", lastName='" + lastName + '\'' +
                 '}';
     }
-
-
-
 }

@@ -1,11 +1,9 @@
 package com.example.demo.controllers;
 
 import com.example.demo.entities.User;
-import com.example.demo.repositories.UserRepo;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Map;
 
@@ -75,14 +73,6 @@ public class UserController {
         return userService.whoAmI();
     }
 
-    /*
-    @GetMapping("/auth/getAllUsers")
-    public List<User> getAllUsers(){
-        return userService.getAllUsers();
-    }
-
-     */
-
     // User story 13 Fungerar
     @PutMapping("/auth/friends")
     public User addFriend(@RequestBody User friend){
@@ -93,6 +83,11 @@ public class UserController {
     @DeleteMapping("/auth/friends/{id}")
     public String deleteFriend(@PathVariable long id) {
         return userService.deleteFriendById(id);
+    }
+
+    @GetMapping("/auth/friends")
+    public List<User> getFriends(){
+        return userService.getFriends();
     }
 
 }
