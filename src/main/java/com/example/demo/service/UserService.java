@@ -84,7 +84,7 @@ public class UserService {
 
         Map description = Map.of(
             "description" , program.get("description"),
-            "broadcastinfo", program.get("broadcastinfo")
+            "broadcastinfo", program.get("broadcastinfo") != null ? program.get("broadcastinfo") : ""
         );
 
         return description;
@@ -175,7 +175,7 @@ public class UserService {
                 "programimage", programItem.get("programimage"),
                 "programurl", programItem.get("programurl"),
                 "description", programItem.get("description"),
-                "responsibleeditor", programItem.get("responsibleeditor")
+                "responsibleeditor", programItem.get("responsibleeditor") != null ? programItem.get("responsibleeditor") : ""
             );
 
             programList.add(programContent);
@@ -197,7 +197,7 @@ public class UserService {
                     "programimage", programItem.get("programimage"),
                     "programurl", programItem.get("programurl"),
                     "description", programItem.get("description"),
-                    "responsibleeditor", programItem.get("responsibleeditor")
+                    "responsibleeditor", programItem.get("responsibleeditor") != null ? programItem.get("responsibleeditor") : ""
             );
             programList.add(programContent);
         }
@@ -226,7 +226,7 @@ public class UserService {
                     "programimage",programItem.get("programimage"),
                     "programurl",programItem.get("programurl"),
                     "description", programItem.get("description"),
-                    "responsibleeditor",programItem.get("responsibleeditor")
+                    "responsibleeditor",programItem.get("responsibleeditor") != null ? programItem.get("responsibleeditor") : ""
                 );
 
                 programList.add(programContent);
@@ -255,11 +255,25 @@ public class UserService {
 
             String formattedDate = date.toString();
 
+            int seconds = (int)broadcastItem.get("totalduration");
+            int p1 = seconds % 60;
+            int p2 = seconds / 60;
+            int p3 = p2 % 60;
+            p2 = p2 /60;
+
+            String formattedSeconds = "";
+
+            if(p1 != 0 || p2 != 0){
+                formattedSeconds = p2 + "t " + p3 + "m " + p1 + "s";
+            }else if(p2 == 0 && p1 == 0){
+                formattedSeconds = p3 + "m";
+            }
+
             Map broadcastContent = Map.of(
                     "id", broadcastItem.get("id"),
                     "title", broadcastItem.get("title"),
                     "broadcastdateutc", formattedDate.replace("T"," ").replace("Z",""),
-                    "totalduration", broadcastItem.get("totalduration"),
+                    "totalduration", formattedSeconds,
                     "image", broadcastItem.get("image")
 
             );

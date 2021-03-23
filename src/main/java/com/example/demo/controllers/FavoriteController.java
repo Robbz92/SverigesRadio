@@ -26,7 +26,7 @@ public class FavoriteController {
     }
 
     //Har Fixat funktionen i favoriteService -> NU FUNGERAR KORREKT!
-    @DeleteMapping("/auth/favorite/{id}")
+    @DeleteMapping("/auth/favorites/{id}")
     public String deleteFavorite(@PathVariable long id){return favoriteService.deleteFavorite(id);}
 
 }

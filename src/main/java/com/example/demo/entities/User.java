@@ -92,14 +92,17 @@ public class User {
         this.lastName = lastName;
     }
 
+    @JsonIgnore
     public List<User> getFriends() {
         return friends;
     }
 
+    @JsonProperty
     public void setFriends(List<User> friends) {
         this.friends = friends;
     }
 
+    @JsonIgnore
     public List<Favorite> getFavorites() {return favorites;}
 
     @JsonProperty
