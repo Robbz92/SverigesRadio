@@ -7,7 +7,6 @@ import com.example.demo.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 
 @Service
@@ -106,6 +105,4 @@ public class FavoriteService {
 
         return filteredFavoriteList;
     }
-
-
 }

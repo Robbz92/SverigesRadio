@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -230,9 +229,7 @@ public class UserService {
                 );
 
                 programList.add(programContent);
-
             }
-
         }
         return programList;
     }
@@ -303,13 +300,6 @@ public class UserService {
         return userRepo.findByEmail(email);
     }
 
-    /*
-    public List<User> getAllUsers() {
-        return userRepo.findAll();
-    }
-
-     */
-
     public User addFriend(User friend) {
         User user = whoAmI();
         if(user != null){
@@ -336,4 +326,15 @@ public class UserService {
             return "Hittar inte vän med id: " + id;
     }
 
+    public List<User> getFriends() {
+        User user = whoAmI();
+        long userId = user.getUserId();
+
+        if(user == null){
+            return null;
+        }
+
+        return user.getFriends();
+
+    }
 }
