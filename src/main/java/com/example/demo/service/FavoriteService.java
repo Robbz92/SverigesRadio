@@ -47,57 +47,65 @@ public class FavoriteService {
     public String deleteFavorite(long id){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepo.findByEmail(email);
-        long userId = user.getUserId();// hämtar id från inloggade user
 
-        Favorite favorite = getFavoriteById(id);//hämtar object-friend i DB genom inmattad id i metoden
-        long favoritesUserId = favorite.getUserId();//hämtar user-id(fk i friends tabellen i DB) från den vän som vill raderas
+        // Hämtar id från inloggad User
+        long userId = user.getUserId();
 
-        if(userId == favoritesUserId){ //Är den som vill raderas vän till den inloggade usern?
+        // Hämtar id i DB genom inmatad id i metoden
+        Favorite favorite = getFavoriteById(id);
+
+        // Hämtar user_id (fk i favorite tabellen i DB) från den favorite som ska raderas
+        long favoritesUserId = favorite.getUserId();
+
+        // Bara inloggad User kan ta bort sina egna favoriter
+        if(userId == favoritesUserId){
             favoriteRepo.deleteById(id);
-            return "Your favorite is deleted!"; //engelska eller svenska???
+            return "Favorit med id: " + id + " är nu borttagen.";
         }else{
-            return "You are not authorized to delete this favorite!";
+            return "Kunde inte hitta favoriten.";
         }
     }
 
-    //Om vi bestämmer oss för att filtrera programs och broadcasts
-    public List<Map> getMyFavorites() {
+
+    public List<Map> getFavorites() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        List<Favorite> favorites = favoriteRepo.allMyFavoritesByEmail(email);
+        List<Favorite> favoriteList = favoriteRepo.allMyFavoritesByEmail(email);
 
-        return filterFavoritesType(favorites);
+        return filterFavorites(favoriteList);
     }
     
-    public List<Map> filterFavoritesType(List<Favorite> favorites){
-        List<Map> filteredFavos = new ArrayList<>();
+    public List<Map> filterFavorites(List<Favorite> favorites){
 
-        for(Favorite fav : favorites){
-            String url = fav.getUrl();
+        List<Map> filteredFavoriteList = new ArrayList<>();
 
-            if(url.contains("broadcasts")){
-                Map broadc = Map.of(
-                        "type", "Broadcast",
-                        "name", fav.getName(),
-                        "image", fav.getImage(),
-                        "url", url
-                );
-                filteredFavos.add(broadc);
+        for(Favorite favoriteItem : favorites){
+            String url = favoriteItem.getUrl();
 
-            }
-            if(url.contains("programs")){
-                Map prog = Map.of(
+            if(url.contains("program")){
+                Map programContent = Map.of(
                         "type", "Program",
-                        "name", fav.getName(),
-                        "image", fav.getImage(),
+                        "name", favoriteItem.getName(),
+                        "image", favoriteItem.getImage(),
                         "url", url
                 );
-                filteredFavos.add(prog);
+                filteredFavoriteList.add(programContent);
+
+            }else{
+                Map broadcastContent = Map.of(
+                        "type", "Broadcast",
+                        "name", favoriteItem.getName(),
+                        "image", favoriteItem.getImage(),
+                        "url", url
+                );
+                filteredFavoriteList.add(broadcastContent);
 
             }
+
         }
 
-        return filteredFavos;
+        return filteredFavoriteList;
     }
+
 
 }

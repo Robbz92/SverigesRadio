@@ -14,19 +14,19 @@ public class FavoriteController {
     @Autowired
     private FavoriteService favoriteService;
 
-    //Userstory 11
+    // User story 11 Fungerar
     @PostMapping("/auth/favorites")
     public Favorite addFavorite(@RequestBody Favorite favorite){return favoriteService.addFavorite(favorite);}
 
-    //Userstory 12 -> Genom detta får vi type av favorite d v s programs eller broadcasts
+    //User story 12 -> Genom detta får vi type av favorite d v s programs eller broadcasts
     // HÄMTAR BARA FAVORITER TILL DEN INLOGGADE ANVÄNDAREN-> FUNGERAR
-    @GetMapping("/auth/getMyFavoritesType")
+    @GetMapping("/auth/favorites")
     public List<Map> getFavorites(){
-        return favoriteService.getMyFavorites();
+        return favoriteService.getFavorites();
     }
 
-    //Har Fixat funtionen i favoriteService -> NU FUNGERAR KORREKT!
-    @DeleteMapping("/auth/deleteFavorite/{id}")
+    //Har Fixat funktionen i favoriteService -> NU FUNGERAR KORREKT!
+    @DeleteMapping("/auth/favorite/{id}")
     public String deleteFavorite(@PathVariable long id){return favoriteService.deleteFavorite(id);}
 
 }

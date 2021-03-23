@@ -15,43 +15,55 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    // Userstory 1 Fungerar
+    // User story 1 Fungerar
     @GetMapping("/rest/channels")
-    public List<Map> getAllChannels(){return userService.getAllOptions("channels", "channels");}
+    public List<Map> getAllChannels(){
+        return userService.getAllOptions("channels", "channels");
+    }
 
-    // Userstory 2 Fungerar // fixa date formatet
+    // User story 2 Fungerar
     @GetMapping("/rest/broadcasts")
-    public List<Map> getAllBroadcasts(){return userService.getAllOptions("scheduledepisodes/rightnow", "channels");}
+    public List<Map> getAllBroadcasts(){
+        return userService.getAllOptions("scheduledepisodes/rightnow", "channels");
+    }
 
-    // Userstory 3 Fungerar 163
+    // User story 3 Fungerar (id = 163)
     @GetMapping("/rest/programs/channel/{id}")
-    public List<Map> getProgramsByChannelId(@PathVariable int id){return userService.getAllOptionsById("programs/index?channelid=", "programs", id);}
+    public List<Map> getProgramsByChannelId(@PathVariable int id){
+        return userService.getAllOptionsById("programs/index?channelid=", "programs", id);
+    }
 
-    // Userstory 4 Fungerar
+    // User story 4 Fungerar
     @GetMapping("/rest/categories")
-    public List<Map> getAllCategories(){return userService.getAllOptions("programcategories", "programcategories");}
+    public List<Map> getAllCategories(){
+        return userService.getAllOptions("programcategories", "programcategories");
+    }
 
-    // Userstory 5 Fungerar
+    // User story 5 Fungerar
     @GetMapping("/rest/programs/category/{id}")
-    public List<Map> getProgramsByCategoryId(@PathVariable int id){return userService.getAllOptionsById("programs/index?programcategoryid=", "programs", id);}
+    public List<Map> getProgramsByCategoryId(@PathVariable int id){
+        return userService.getAllOptionsById("programs/index?programcategoryid=", "programs", id);
+    }
 
-    // Userstory 6 Fungerar
+    // User story 6 Fungerar
     @GetMapping("/rest/programs/{input}")
     public List<Map> searchProgram(@PathVariable String input){
         return userService.searchProgram(input);
     }
 
-    // Userstory 7 // Fungerar
+    // User story 7 Fungerar
     @GetMapping("/rest/description/{id}")
     public Map getDescriptionById(@PathVariable int id){return userService.getDescriptionById(id);}
 
-    // Userstory 8
+    // User story 8 Fungerar
     @GetMapping("/rest/program/broadcasts/{id}")
-    public List<Map> getProgramBroadcasts(@PathVariable int id){return userService.getAllOptionsById("broadcasts?programid=","broadcasts", id);}
+    public List<Map> getProgramBroadcasts(@PathVariable int id){
+        return userService.getAllOptionsById("broadcasts?programid=","broadcasts", id);
+    }
 
     // ----->
 
-    // Userstory 9
+    // User story 9 Fungerar
     @PostMapping("/rest/register")
     public User register(@RequestBody User user){
 
@@ -63,16 +75,21 @@ public class UserController {
         return userService.whoAmI();
     }
 
+    /*
     @GetMapping("/auth/getAllUsers")
     public List<User> getAllUsers(){
         return userService.getAllUsers();
     }
 
+     */
+
+    // User story 13 Fungerar
     @PutMapping("/auth/friends")
     public User addFriend(@RequestBody User friend){
         return userService.addFriend(friend);
     }
 
+    // User story 13 Fungerar
     @DeleteMapping("/auth/friends/{id}")
     public String deleteFriend(@PathVariable long id) {
         return userService.deleteFriendById(id);

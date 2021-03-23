@@ -30,7 +30,6 @@ public class UserService {
 
     private String sverigesRadioApi = "http://api.sr.se/api/v2/";
     private String jsonFormatPagiFalse = "/?format=json&pagination=false";
-    private String jsonFormat = "?format=json";
     private String jsonFormat2 = "&format=json&pagination=false";
 
     // Används för att hämta ALLT
@@ -57,7 +56,6 @@ public class UserService {
     public List<Map> getAllOptionsById(String pathOption, String responseOption, int id){
         RestTemplate template = new RestTemplate();
 
-        //använd GenericObject ist för map. list = Arrays.asList(contentMap)
         Map response = template.getForObject(sverigesRadioApi + pathOption + id + jsonFormat2, Map.class);
 
         List<Map> contentMap = (List<Map>) response.get(responseOption);
@@ -75,13 +73,12 @@ public class UserService {
     }
 
     public Map getDescriptionById(int id) {
-        /*
-            Hämtar bara ut ett objekt här.
-         */
 
-        RestTemplate template = new RestTemplate();
+        // Hämtar ut ett objekt från API:t.
 
-        Map response = template.getForObject(sverigesRadioApi + "programs/" + id + "?format=json", Map.class);
+        RestTemplate restTemplate = new RestTemplate();
+
+        Map response = restTemplate.getForObject(sverigesRadioApi + "programs/" + id + "?format=json", Map.class);
 
         Map program = (Map) response.get("program");
 
@@ -94,42 +91,41 @@ public class UserService {
     }
 
     private List<Map> getAllChannels(List<Map> contentMap){
-        List<Map> channels = new ArrayList<>();
+        List<Map> channelList = new ArrayList<>();
 
-        for(Map channel : contentMap){
+        for(Map channelItem : contentMap){
 
-            Map generic = Map.of(
-                "id", channel.get("id"),
-                "name", channel.get("name"),
-                "image", channel.get("image") != null ? channel.get("image") : "https://static-cdn.sr.se/images/2386/d05d0580-43ed-48ef-991b-01b536e03b33.jpg?preset=api-default-square",
-                "tagline", channel.get("tagline"),
-                "scheduleurl", channel.get("scheduleurl") != null ? channel.get("scheduleurl") : "",
-                "siteurl", channel.get("siteurl")
+            Map channelContent = Map.of(
+                "id", channelItem.get("id"),
+                "name", channelItem.get("name"),
+                "image", channelItem.get("image") != null ? channelItem.get("image") : "https://static-cdn.sr.se/images/2386/d05d0580-43ed-48ef-991b-01b536e03b33.jpg?preset=api-default-square",
+                "tagline", channelItem.get("tagline"),
+                "scheduleurl", channelItem.get("scheduleurl") != null ? channelItem.get("scheduleurl") : "",
+                "siteurl", channelItem.get("siteurl")
             );
-            channels.add(generic);
+            channelList.add(channelContent);
         }
 
-        return channels;
+        return channelList;
     }
 
     private List<Map> getAllCategories(List<Map> contentMap){
-        List<Map> channels = new ArrayList<>();
+        List<Map> categoryList = new ArrayList<>();
 
-        for(Map channel : contentMap){
+        for(Map categoryItem : contentMap){
 
-            Map generic = Map.of(
-                "id" , channel.get("id"),
-                "name", channel.get("name")
+            Map categoryContent = Map.of(
+                "id" , categoryItem.get("id"),
+                "name", categoryItem.get("name")
             );
-            channels.add(generic);
+            categoryList.add(categoryContent);
         }
 
-        return channels;
+        return categoryList;
     }
 
-    // kopplad med getAllOptions
     private List<Map> getAllBroadcasts(List<Map> contentMap) {
-        List<Map> broadcasts = new ArrayList<>();
+        List<Map> broadcastList = new ArrayList<>();
 
         // Formaterar Json-Date till en String
         DateTimeFormatter jsonDateFormatter = new DateTimeFormatterBuilder()
@@ -140,12 +136,12 @@ public class UserService {
                 .toFormatter();
 
         // list + objekt
-        for(Map broadcast : contentMap){
-            if(broadcast.get("nextscheduledepisode") == null){
+        for(Map broadcastItem : contentMap){
+            if(broadcastItem.get("nextscheduledepisode") == null){
                 continue;
             }
 
-            Map nextscheduledepisode = (Map) broadcast.get("nextscheduledepisode");
+            Map nextscheduledepisode = (Map) broadcastItem.get("nextscheduledepisode");
             String title = (String)nextscheduledepisode.get("title");
             String description = (String) nextscheduledepisode.get("description");
             String starttimeutc = (String) nextscheduledepisode.get("starttimeutc");
@@ -153,96 +149,96 @@ public class UserService {
             Instant date = jsonDateFormatter.parse(starttimeutc, Instant::from);
             String formattedDate = date.toString();
 
-            Map generic = Map.of(
-                "id" , broadcast.get("id"),
-                "name", broadcast.get("name"),
+            Map broadcastContent = Map.of(
+                "id" , broadcastItem.get("id"),
+                "name", broadcastItem.get("name"),
                 "title", title,
                 "description", description,
                 "starttimeutc", formattedDate.replace("T"," ").replace("Z","")
             );
 
-            broadcasts.add(generic);
+            broadcastList.add(broadcastContent);
         }
 
-        return broadcasts;
+        return broadcastList;
     }
 
     private List<Map> getProgramsByChannelId(List<Map> contentMap) {
 
-        List<Map> allPrograms = new ArrayList<>();
+        List<Map> programList = new ArrayList<>();
 
-        for(Map program : contentMap){
+        for(Map programItem : contentMap){
 
-            Map generic = Map.of(
-                "id" , program.get("id"),
-                "name", program.get("name"),
-                "programimage", program.get("programimage"),
-                "programurl", program.get("programurl"),
-                "description", program.get("description"),
-                "responsibleeditor", program.get("responsibleeditor")
+            Map programContent = Map.of(
+                "id" , programItem.get("id"),
+                "name", programItem.get("name"),
+                "programimage", programItem.get("programimage"),
+                "programurl", programItem.get("programurl"),
+                "description", programItem.get("description"),
+                "responsibleeditor", programItem.get("responsibleeditor")
             );
 
-            allPrograms.add(generic);
+            programList.add(programContent);
         }
 
-        return allPrograms;
+        return programList;
 
     }
 
     private List<Map> getProgramsByCategoryId(List<Map> contentMap) {
 
-        List<Map> allPrograms = new ArrayList<>();
+        List<Map> programList = new ArrayList<>();
 
-        for(Map program : contentMap){
+        for(Map programItem : contentMap){
 
-            Map generic = Map.of(
-                    "id" , program.get("id"),
-                    "name", program.get("name"),
-                    "programimage", program.get("programimage"),
-                    "programurl", program.get("programurl"),
-                    "description", program.get("description"),
-                    "responsibleeditor", program.get("responsibleeditor")
+            Map programContent = Map.of(
+                    "id" , programItem.get("id"),
+                    "name", programItem.get("name"),
+                    "programimage", programItem.get("programimage"),
+                    "programurl", programItem.get("programurl"),
+                    "description", programItem.get("description"),
+                    "responsibleeditor", programItem.get("responsibleeditor")
             );
-            allPrograms.add(generic);
+            programList.add(programContent);
         }
 
-        return allPrograms;
+        return programList;
 
     }
 
     public List<Map> searchProgram(String input) {
-        List<Map> programs = new ArrayList<>();
+        List<Map> programList = new ArrayList<>();
 
-        RestTemplate template = new RestTemplate();
+        RestTemplate restTemplate = new RestTemplate();
 
-        Map response = template.getForObject(sverigesRadioApi + "programs" + jsonFormatPagiFalse, Map.class);
+        Map response = restTemplate.getForObject(sverigesRadioApi + "programs" + jsonFormatPagiFalse, Map.class);
 
         List<Map> contentMap = (List<Map>) response.get("programs");
 
-        for(Map program : contentMap){
-            String name= (String) program.get("name"); // Filtrerar genom program-namn
-            String description = (String) program.get("description"); // Filtrerar genom program-beskrivning
+        for(Map programItem : contentMap){
+            String name = (String) programItem.get("name"); // Filtrerar genom program-namn
+            String description = (String) programItem.get("description"); // Filtrerar genom program-beskrivning
 
             if(name.toLowerCase().contains(input.toLowerCase()) || description.toLowerCase().contains(input.toLowerCase())){
-                Map generic = Map.of(
-                    "id",program.get("id"),
-                    "name",program.get("name"),
-                    "programimage",program.get("programimage"),
-                    "programurl",program.get("programurl"),
-                    "description", program.get("description"),
-                    "responsibleeditor",program.get("responsibleeditor")
+                Map programContent = Map.of(
+                    "id",programItem.get("id"),
+                    "name",programItem.get("name"),
+                    "programimage",programItem.get("programimage"),
+                    "programurl",programItem.get("programurl"),
+                    "description", programItem.get("description"),
+                    "responsibleeditor",programItem.get("responsibleeditor")
                 );
 
-                programs.add(generic);
+                programList.add(programContent);
 
             }
 
         }
-        return programs;
+        return programList;
     }
 
     public List<Map> getProgramBroadcasts(List<Map> contentMap) {
-        List<Map> broadCasts = new ArrayList<>();
+        List<Map> broadcastList = new ArrayList<>();
 
         // Formaterar Json-Date till en String
         DateTimeFormatter jsonDateFormatter = new DateTimeFormatterBuilder()
@@ -252,39 +248,38 @@ public class UserService {
                 .appendLiteral(")/")
                 .toFormatter();
 
-        for(Map broadCast : contentMap){
+        for(Map broadcastItem : contentMap){
 
-            String broadcastDateUtc = (String)broadCast.get("broadcastdateutc");
+            String broadcastDateUtc = (String)broadcastItem.get("broadcastdateutc");
             Instant date = jsonDateFormatter.parse(broadcastDateUtc, Instant::from);
 
             String formattedDate = date.toString();
 
-            Map generic = Map.of(
-                    "id", broadCast.get("id"),
-                    "title", broadCast.get("title"),
+            Map broadcastContent = Map.of(
+                    "id", broadcastItem.get("id"),
+                    "title", broadcastItem.get("title"),
                     "broadcastdateutc", formattedDate.replace("T"," ").replace("Z",""),
-                    "totalduration", broadCast.get("totalduration"),
-                    "image", broadCast.get("image")
+                    "totalduration", broadcastItem.get("totalduration"),
+                    "image", broadcastItem.get("image")
 
             );
 
-            broadCasts.add(generic);
+            broadcastList.add(broadcastContent);
 
-            // skicka url till friends. samt egna favorites.
-            // hämtar url för sändningar.
-            if(broadCast.get("broadcastfiles") != null){
-                List<Map> broadCastFiles = (List<Map>) broadCast.get("broadcastfiles");
-                for(Map broadCastList : broadCastFiles){
+
+            if(broadcastItem.get("broadcastfiles") != null){
+                List<Map> broadcastFilesList = (List<Map>) broadcastItem.get("broadcastfiles");
+                for(Map broadcastFile : broadcastFilesList){
 
                     Map broadCastFiles1 = Map.of(
-                         "url" , broadCastList.get("url")
+                         "url" , broadcastFile.get("url")
                     );
-                    broadCasts.add(broadCastFiles1);
+                    broadcastList.add(broadCastFiles1);
                 }
             }
         }
 
-        return broadCasts;
+        return broadcastList;
     }
 
     public User register(User user){return myUserDetailsService.registerUser(user);}
@@ -294,9 +289,12 @@ public class UserService {
         return userRepo.findByEmail(email);
     }
 
+    /*
     public List<User> getAllUsers() {
         return userRepo.findAll();
     }
+
+     */
 
     public User addFriend(User friend) {
         User user = whoAmI();
@@ -317,11 +315,11 @@ public class UserService {
                     user.removeFriend(id);
                     userRepo.deleteFriend(id, userId);
 
-                    return "Deleted";
+                    return "Användare med id: " + id + " har tagits bort.";
                 }
 
             }
-            return "The friend does not exist!";
+            return "Hittar inte vän med id: " + id;
     }
 
 }
