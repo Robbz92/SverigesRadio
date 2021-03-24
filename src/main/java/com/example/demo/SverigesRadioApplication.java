@@ -10,4 +10,20 @@ public class SverigesRadioApplication {
 		SpringApplication.run(SverigesRadioApplication.class, args);
 	}
 
+	/*
+ 		MVC - Model View Controller
+
+ 		Model - Store data
+ 		For example: the database
+ 		Spring - repositories
+
+ 		View - the interface where the user (or programmer) can interact with
+ 		For example: REST-apo
+ 		Spring - controllers
+
+ 		Controller - Is the logics, change of data
+ 		For example:
+ 		Spring - services
+ */
+
 }
