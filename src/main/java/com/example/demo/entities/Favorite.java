@@ -78,11 +78,14 @@ public class Favorite {
 
     public void setUrl(String url) {this.url = url;}
 
+    /*
     @JsonIgnore
     public User getUser() {return user;}
 
     @JsonProperty
     public void setUser(User user) {this.user = user;}
+
+     */
 
     @Override
     public String toString() {

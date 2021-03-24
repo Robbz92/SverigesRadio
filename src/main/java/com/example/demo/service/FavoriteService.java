@@ -65,7 +65,6 @@ public class FavoriteService {
         }
     }
 
-
     public List<Map> getFavorites() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 

@@ -300,11 +300,12 @@ public class UserService {
         return userRepo.findByEmail(email);
     }
 
-    public User addFriend(User friend) {
+    public String addFriend(User friend) {
         User user = whoAmI();
         if(user != null){
             user.addFriend(friend);
-            return userRepo.save(user);
+            userRepo.save(user);
+            return "Din vän har lagts till!";
         }
         return null;
     }

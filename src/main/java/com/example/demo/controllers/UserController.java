@@ -75,7 +75,7 @@ public class UserController {
 
     // User story 13 Fungerar
     @PutMapping("/auth/friends")
-    public User addFriend(@RequestBody User friend){
+    public String addFriend(@RequestBody User friend){
         return userService.addFriend(friend);
     }
 
