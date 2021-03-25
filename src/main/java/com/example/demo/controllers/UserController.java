@@ -20,9 +20,9 @@ public class UserController {
     }
 
     // User story 2 Fungerar
-    @GetMapping("/rest/broadcasts")
-    public List<Map> getAllBroadcasts(){
-        return userService.getAllOptions("scheduledepisodes/rightnow", "channels");
+    @GetMapping("/rest/channels/broadcasts/{id}")
+    public List<Map> getAllBroadcasts(@PathVariable int id){
+        return userService.getAllOptionsById("scheduledepisodes?channelid=", "schedule", id);
     }
 
     // User story 3 Fungerar (id = 163)
@@ -89,5 +89,8 @@ public class UserController {
     public List<User> getFriends(){
         return userService.getFriends();
     }
+
+    @GetMapping("/auth/broadcasts/{id}")
+    public List<Map> getFavoriteBroadcasts(@PathVariable int id){return userService.getFavoriteBroadcasts("scheduledepisodes?channelid=", "schedule", id);}
 
 }
