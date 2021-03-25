@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.configs.MyUserDetailsService;
+import com.example.demo.entities.Favorite;
 import com.example.demo.entities.User;
 import com.example.demo.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
@@ -31,6 +33,15 @@ public class UserService {
     private String jsonFormatPagiFalse = "/?format=json&pagination=false";
     private String jsonFormat2 = "&format=json&pagination=false";
 
+    private LocalDate date = LocalDate.now();
+    private String jsonFormat3 = "&fromdate=" + date + "&todate=" + date + "&pagination=false&format=json";
+
+    private String today = "&date=" + date + "&pagination=false&format=json";
+    private String tomorrow = "&date=" + date.plusDays(1) + "&pagination=false&format=json";
+    private String dayAfterTomorrow = "&date=" + date.plusDays(2) + "&pagination=false&format=json";
+
+
+
     // Används för att hämta ALLT
     public List<Map> getAllOptions(String pathOption, String responseOption){
         RestTemplate template = new RestTemplate();
@@ -44,8 +55,6 @@ public class UserService {
                 return getAllChannels(contentMap);
             case "programcategories":
                 return getAllCategories(contentMap);
-            case "scheduledepisodes/rightnow":
-                return getAllBroadcasts(contentMap);
         }
 
         return null;
@@ -54,8 +63,14 @@ public class UserService {
     // Används för att hämta genom ID
     public List<Map> getAllOptionsById(String pathOption, String responseOption, int id){
         RestTemplate template = new RestTemplate();
+        Map response = null;
 
-        Map response = template.getForObject(sverigesRadioApi + pathOption + id + jsonFormat2, Map.class);
+        // If sats för att ha datum till favoriteBroadcasts
+        if(pathOption.equals("scheduledepisodes?channelid=")){
+            response = template.getForObject(sverigesRadioApi + pathOption + id + today, Map.class);
+        }else{
+            response = template.getForObject(sverigesRadioApi + pathOption + id + jsonFormat2, Map.class);
+        }
 
         List<Map> contentMap = (List<Map>) response.get(responseOption);
 
@@ -66,6 +81,8 @@ public class UserService {
                 return getProgramsByCategoryId(contentMap);
             case "broadcasts?programid=":
                 return getProgramBroadcasts(contentMap);
+            case "scheduledepisodes?channelid=":
+                return getAllBroadcasts(contentMap);
         }
 
         return null;
@@ -136,27 +153,22 @@ public class UserService {
 
         // list + objekt
         for(Map broadcastItem : contentMap){
-            if(broadcastItem.get("nextscheduledepisode") == null){
-                continue;
-            }
 
-            Map nextscheduledepisode = (Map) broadcastItem.get("nextscheduledepisode");
-            String title = (String)nextscheduledepisode.get("title");
-            String description = (String) nextscheduledepisode.get("description");
-            String starttimeutc = (String) nextscheduledepisode.get("starttimeutc");
-
+            String starttimeutc = (String) broadcastItem.get("starttimeutc");
             Instant date = jsonDateFormatter.parse(starttimeutc, Instant::from);
             String formattedDate = date.toString();
 
-            Map broadcastContent = Map.of(
-                "id" , broadcastItem.get("id"),
-                "name", broadcastItem.get("name"),
-                "title", title,
-                "description", description,
-                "starttimeutc", formattedDate.replace("T"," ").replace("Z","")
+            Map programs = (Map)broadcastItem.get("program");
+                int programId = (int)programs.get("id");
+
+            Map episodeContent = Map.of(
+                    "id", programId,
+                    "title", broadcastItem.get("title"),
+                    "description", broadcastItem.get("description"),
+                    "starttimeutc", formattedDate.replace("T"," ").replace("Z","")
             );
 
-            broadcastList.add(broadcastContent);
+            broadcastList.add(episodeContent);
         }
 
         return broadcastList;
@@ -266,31 +278,84 @@ public class UserService {
                 formattedSeconds = p3 + "m";
             }
 
+            String url = "";
+
+            List<Map> broadcastFiles = (List<Map>)broadcastItem.get("broadcastfiles");
+            for(Map broadcastFile : broadcastFiles){
+                url = (String)broadcastFile.get("url");
+            }
+
             Map broadcastContent = Map.of(
                     "id", broadcastItem.get("id"),
                     "title", broadcastItem.get("title"),
                     "broadcastdateutc", formattedDate.replace("T"," ").replace("Z",""),
                     "totalduration", formattedSeconds,
-                    "image", broadcastItem.get("image")
+                    "image", broadcastItem.get("image"),
+                    "url", url
 
             );
 
             broadcastList.add(broadcastContent);
+        }
 
+        return broadcastList;
+    }
 
-            if(broadcastItem.get("broadcastfiles") != null){
-                List<Map> broadcastFilesList = (List<Map>) broadcastItem.get("broadcastfiles");
-                for(Map broadcastFile : broadcastFilesList){
+    public List<Map> getFavoriteBroadcasts(String pathOption, String responseOption, int id){
 
-                    Map broadCastFiles1 = Map.of(
-                         "url" , broadcastFile.get("url")
-                    );
-                    broadcastList.add(broadCastFiles1);
+        RestTemplate template = new RestTemplate();
+        Map response = template.getForObject(sverigesRadioApi + pathOption + id + jsonFormat3, Map.class);
+
+        List<Map> contentMap = (List<Map>) response.get(responseOption);
+
+        List<Map> broadcastList = new ArrayList<>();
+
+        // Formaterar Json-Date till en String
+        DateTimeFormatter jsonDateFormatter = new DateTimeFormatterBuilder()
+                .appendLiteral("/Date(")
+                .appendValue(ChronoField.INSTANT_SECONDS)
+                .appendValue(ChronoField.MILLI_OF_SECOND, 3)
+                .appendLiteral(")/")
+                .toFormatter();
+
+        for(Map broadcastItem : contentMap){
+
+            String broadcastDateUtc = (String)broadcastItem.get("starttimeutc");
+            Instant date = jsonDateFormatter.parse(broadcastDateUtc, Instant::from);
+
+            String formattedDate = date.toString();
+
+            Map program = (Map)broadcastItem.get("program");
+
+            Map broadcastContent = Map.of(
+                    "id", program.get("id"),
+                    "title", broadcastItem.get("title") != null ? broadcastItem.get("title") : "",
+                    "starttimeutc", formattedDate.replace("T"," ").replace("Z","")
+            );
+
+            broadcastList.add(broadcastContent);
+
+        }
+
+        User user = whoAmI();
+        List<Favorite> favorite = user.getFavorites();
+        List<Map> myFavorites = new ArrayList<>();
+
+        String url = "";
+
+        for(Favorite item : favorite){
+            url = item.getUrl();
+            int favoriteId = Integer.parseInt(url.split("=")[1]);
+
+            for(Map findId : broadcastList){
+
+                if (favoriteId == (int)findId.get("id")) {
+                        myFavorites.add(findId);
                 }
             }
         }
 
-        return broadcastList;
+        return myFavorites;
     }
 
     public User register(User user){return myUserDetailsService.registerUser(user);}
