@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/api")
 public class UserController {
 
     @Autowired
@@ -64,7 +65,6 @@ public class UserController {
     // User story 9 Fungerar
     @PostMapping("/rest/register")
     public User register(@RequestBody User user){
-
         return userService.register(user);
     }
 

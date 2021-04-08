@@ -29,7 +29,7 @@ public class ServiceConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/rest/**").permitAll()
                 .and()
                 .formLogin()
-                //.loginPage("/login") // vår egna login sida
+                .loginPage("/login") // vår egna login sida
         ;
     }
 
