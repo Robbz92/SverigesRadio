@@ -111,13 +111,20 @@ public class UserService {
 
         for(Map channelItem : contentMap){
 
+            String audioUrl = "";
+
+            Map liveAudio = (Map)channelItem.get("liveaudio");
+            audioUrl = (String)liveAudio.get("url");
+
             Map channelContent = Map.of(
                 "id", channelItem.get("id"),
                 "name", channelItem.get("name"),
                 "image", channelItem.get("image") != null ? channelItem.get("image") : "https://static-cdn.sr.se/images/2386/d05d0580-43ed-48ef-991b-01b536e03b33.jpg?preset=api-default-square",
                 "tagline", channelItem.get("tagline"),
                 "scheduleurl", channelItem.get("scheduleurl") != null ? channelItem.get("scheduleurl") : "",
-                "siteurl", channelItem.get("siteurl")
+                "siteurl", channelItem.get("siteurl"),
+                    "audioUrl", audioUrl
+
             );
             channelList.add(channelContent);
         }
