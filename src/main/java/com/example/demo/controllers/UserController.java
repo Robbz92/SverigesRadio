@@ -21,10 +21,25 @@ public class UserController {
     }
 
     // User story 2 Fungerar
+    // ---------------------------------------------------->
+    //  - visar dagens tablå
     @GetMapping("/rest/channels/broadcasts/{id}")
     public List<Map> getAllBroadcasts(@PathVariable int id){
         return userService.getAllOptionsById("scheduledepisodes?channelid=", "schedule", id);
     }
+
+    // User story 2 Fungerar - visar tablå för dagen efter
+    @GetMapping("/rest/channels/broadcastsTomorrow/{id}")
+    public List<Map> getAllBroadcastsTomorrow(@PathVariable int id){
+        return userService.getAllBroadcastsTomorrow(id);
+    }
+
+    // User story 2 Fungerar - visar tablå för 2 dagar framåt
+    @GetMapping("/rest/channels/broadcastsDayAfterTomorrow/{id}")
+    public List<Map> getAllBroadcastsdayAfterTomorrow(@PathVariable int id){
+        return userService.getAllBroadcastsdayAfterTomorrow(id);
+    }
+    // ---------------------------------------------------->
 
     // User story 3 Fungerar (id = 163)
     @GetMapping("/rest/programs/channel/{id}")

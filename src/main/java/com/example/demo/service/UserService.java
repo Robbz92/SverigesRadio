@@ -40,8 +40,6 @@ public class UserService {
     private String tomorrow = "&date=" + date.plusDays(1) + "&pagination=false&format=json";
     private String dayAfterTomorrow = "&date=" + date.plusDays(2) + "&pagination=false&format=json";
 
-
-
     // Används för att hämta ALLT
     public List<Map> getAllOptions(String pathOption, String responseOption){
         RestTemplate template = new RestTemplate();
@@ -68,6 +66,7 @@ public class UserService {
         // If sats för att ha datum till favoriteBroadcasts
         if(pathOption.equals("scheduledepisodes?channelid=")){
             response = template.getForObject(sverigesRadioApi + pathOption + id + today, Map.class);
+
         }else{
             response = template.getForObject(sverigesRadioApi + pathOption + id + jsonFormat2, Map.class);
         }
@@ -139,7 +138,7 @@ public class UserService {
 
         return categoryList;
     }
-
+    //----------------------------------------------------------------
     private List<Map> getAllBroadcasts(List<Map> contentMap) {
         List<Map> broadcastList = new ArrayList<>();
 
@@ -174,6 +173,84 @@ public class UserService {
         return broadcastList;
     }
 
+    public List<Map> getAllBroadcastsTomorrow(int id) {
+
+        RestTemplate template = new RestTemplate();
+        Map response = template.getForObject(sverigesRadioApi + "scheduledepisodes?channelid=" + id + tomorrow, Map.class);
+
+        List<Map> contentMap = (List<Map>) response.get("schedule");
+        List<Map> broadcastList = new ArrayList<>();
+
+        // Formaterar Json-Date till en String
+        DateTimeFormatter jsonDateFormatter = new DateTimeFormatterBuilder()
+                .appendLiteral("/Date(")
+                .appendValue(ChronoField.INSTANT_SECONDS)
+                .appendValue(ChronoField.MILLI_OF_SECOND, 3)
+                .appendLiteral(")/")
+                .toFormatter();
+
+        // list + objekt
+        for(Map broadcastItem : contentMap){
+
+            String starttimeutc = (String) broadcastItem.get("starttimeutc");
+            Instant date = jsonDateFormatter.parse(starttimeutc, Instant::from);
+            String formattedDate = date.toString();
+
+            Map programs = (Map)broadcastItem.get("program");
+            int programId = (int)programs.get("id");
+
+            Map episodeContent = Map.of(
+                    "id", programId,
+                    "title", broadcastItem.get("title"),
+                    "description", broadcastItem.get("description"),
+                    "starttimeutc", formattedDate.replace("T"," ").replace("Z","")
+            );
+
+            broadcastList.add(episodeContent);
+        }
+
+        return broadcastList;
+    }
+
+    public List<Map> getAllBroadcastsdayAfterTomorrow(int id) {
+
+        RestTemplate template = new RestTemplate();
+        Map response = template.getForObject(sverigesRadioApi + "scheduledepisodes?channelid=" + id + dayAfterTomorrow, Map.class);
+
+        List<Map> contentMap = (List<Map>) response.get("schedule");
+        List<Map> broadcastList = new ArrayList<>();
+
+        // Formaterar Json-Date till en String
+        DateTimeFormatter jsonDateFormatter = new DateTimeFormatterBuilder()
+                .appendLiteral("/Date(")
+                .appendValue(ChronoField.INSTANT_SECONDS)
+                .appendValue(ChronoField.MILLI_OF_SECOND, 3)
+                .appendLiteral(")/")
+                .toFormatter();
+
+        // list + objekt
+        for(Map broadcastItem : contentMap){
+
+            String starttimeutc = (String) broadcastItem.get("starttimeutc");
+            Instant date = jsonDateFormatter.parse(starttimeutc, Instant::from);
+            String formattedDate = date.toString();
+
+            Map programs = (Map)broadcastItem.get("program");
+            int programId = (int)programs.get("id");
+
+            Map episodeContent = Map.of(
+                    "id", programId,
+                    "title", broadcastItem.get("title"),
+                    "description", broadcastItem.get("description"),
+                    "starttimeutc", formattedDate.replace("T"," ").replace("Z","")
+            );
+
+            broadcastList.add(episodeContent);
+        }
+
+        return broadcastList;
+    }
+   // ----------------------------------------------------------------
     private List<Map> getProgramsByChannelId(List<Map> contentMap) {
 
         List<Map> programList = new ArrayList<>();
