@@ -74,7 +74,7 @@ public class UserController {
     }
 
     // User story 13 Fungerar
-    @PutMapping("/auth/friends")
+    @PostMapping("/auth/friends")
     public String addFriend(@RequestBody User friend){
         return userService.addFriend(friend);
     }
@@ -93,4 +93,10 @@ public class UserController {
     @GetMapping("/auth/broadcasts/{id}")
     public List<Map> getFavoriteBroadcasts(@PathVariable int id){return userService.getFavoriteBroadcasts("scheduledepisodes?channelid=", "schedule", id);}
 
+
+    @GetMapping("/auth/users")
+    public List<User> getUsers(){
+
+        return userService.getAll();
+    }
 }

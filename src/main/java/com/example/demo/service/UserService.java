@@ -377,7 +377,7 @@ public class UserService {
         if(user != null){
             user.addFriend(friend);
             userRepo.save(user);
-            return "Din vän har lagts till!";
+            return "success";
         }
         return null;
     }
@@ -392,7 +392,7 @@ public class UserService {
                     user.removeFriend(id);
                     userRepo.deleteFriend(id, userId);
 
-                    return "Användare med id: " + id + " har tagits bort.";
+                    return "success";
                 }
 
             }
@@ -401,7 +401,6 @@ public class UserService {
 
     public List<User> getFriends() {
         User user = whoAmI();
-        long userId = user.getUserId();
 
         if(user == null){
             return null;
@@ -409,5 +408,14 @@ public class UserService {
 
         return user.getFriends();
 
+    }
+
+    //HÄR TESTAS DET
+    public List<User> getAll() {
+        User user = whoAmI();//tillagda rader så försvinner "alla användare" när man loggar ut keep this
+        if(user == null){
+            return null;
+        }
+        return userRepo.findAll();
     }
 }
